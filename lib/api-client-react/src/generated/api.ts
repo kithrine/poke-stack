@@ -16,7 +16,12 @@ import type {
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { ErrorResponse, HealthStatus, UploadResult } from "./api.schemas";
+import type {
+  ErrorResponse,
+  HealthStatus,
+  PokemonCardData,
+  UploadResult,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
 import type { ErrorType } from "../custom-fetch";
@@ -183,4 +188,89 @@ export const useUploadResume = <
   TContext
 > => {
   return useMutation(getUploadResumeMutationOptions(options));
+};
+
+/**
+ * Extracts text and uses AI to generate Pokémon card data
+ * @summary Analyze an uploaded resume
+ */
+export const getAnalyzeResumeUrl = (filename: string) => {
+  return `/api/resume/analyze/${filename}`;
+};
+
+export const analyzeResume = async (
+  filename: string,
+  options?: RequestInit,
+): Promise<PokemonCardData> => {
+  return customFetch<PokemonCardData>(getAnalyzeResumeUrl(filename), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getAnalyzeResumeMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof analyzeResume>>,
+    TError,
+    { filename: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof analyzeResume>>,
+  TError,
+  { filename: string },
+  TContext
+> => {
+  const mutationKey = ["analyzeResume"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof analyzeResume>>,
+    { filename: string }
+  > = (props) => {
+    const { filename } = props ?? {};
+
+    return analyzeResume(filename, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AnalyzeResumeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof analyzeResume>>
+>;
+
+export type AnalyzeResumeMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Analyze an uploaded resume
+ */
+export const useAnalyzeResume = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof analyzeResume>>,
+    TError,
+    { filename: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof analyzeResume>>,
+  TError,
+  { filename: string },
+  TContext
+> => {
+  return useMutation(getAnalyzeResumeMutationOptions(options));
 };

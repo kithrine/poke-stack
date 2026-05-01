@@ -11,7 +11,7 @@ tags:
   - name: health
     description: Health operations
   - name: resume
-    description: Resume upload operations
+    description: Resume upload and analysis operations
 paths:
   /healthz:
     get:
@@ -45,6 +45,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /resume/analyze/{filename}:
+    post:
+      operationId: analyzeResume
+      tags: [resume]
+      summary: Analyze an uploaded resume
+      description: Extracts text and uses AI to generate Pokémon card data
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Analysis complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PokemonCardData"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -73,6 +104,46 @@ components:
         - originalName
         - size
         - message
+    PokemonAttack:
+      type: object
+      properties:
+        name:
+          type: string
+        damage:
+          type: number
+        description:
+          type: string
+      required:
+        - name
+        - damage
+        - description
+    PokemonCardData:
+      type: object
+      properties:
+        name:
+          type: string
+        pokemonType:
+          type: string
+        typeRationale:
+          type: string
+        hp:
+          type: number
+        attacks:
+          type: array
+          items:
+            $ref: "#/components/schemas/PokemonAttack"
+        pokedexEntry:
+          type: string
+        yearsOfExperience:
+          type: number
+      required:
+        - name
+        - pokemonType
+        - typeRationale
+        - hp
+        - attacks
+        - pokedexEntry
+        - yearsOfExperience
     ErrorResponse:
       type: object
       properties:

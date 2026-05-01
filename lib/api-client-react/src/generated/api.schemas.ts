@@ -17,6 +17,22 @@ export interface UploadResult {
   message: string;
 }
 
+export interface PokemonAttack {
+  name: string;
+  damage: number;
+  description: string;
+}
+
+export interface PokemonCardData {
+  name: string;
+  pokemonType: string;
+  typeRationale: string;
+  hp: number;
+  attacks: PokemonAttack[];
+  pokedexEntry: string;
+  yearsOfExperience: number;
+}
+
 export interface ErrorResponse {
   error: string;
 }

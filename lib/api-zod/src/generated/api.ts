@@ -26,3 +26,27 @@ export const UploadResumeResponse = zod.object({
   size: zod.number(),
   message: zod.string(),
 });
+
+/**
+ * Extracts text and uses AI to generate Pokémon card data
+ * @summary Analyze an uploaded resume
+ */
+export const AnalyzeResumeParams = zod.object({
+  filename: zod.coerce.string(),
+});
+
+export const AnalyzeResumeResponse = zod.object({
+  name: zod.string(),
+  pokemonType: zod.string(),
+  typeRationale: zod.string(),
+  hp: zod.number(),
+  attacks: zod.array(
+    zod.object({
+      name: zod.string(),
+      damage: zod.number(),
+      description: zod.string(),
+    }),
+  ),
+  pokedexEntry: zod.string(),
+  yearsOfExperience: zod.number(),
+});

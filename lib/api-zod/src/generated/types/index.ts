@@ -8,4 +8,6 @@
 
 export * from "./errorResponse";
 export * from "./healthStatus";
+export * from "./pokemonAttack";
+export * from "./pokemonCardData";
 export * from "./uploadResult";
