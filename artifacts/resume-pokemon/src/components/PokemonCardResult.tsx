@@ -268,7 +268,7 @@ export function PokemonCardResult({ data, onReset }: Props) {
               <div className="w-full h-full relative rounded-sm border-[4px] shadow-inner bg-black/10 overflow-hidden" style={{ borderColor: theme.accent }}>
                 <div className="absolute inset-0 border border-white/40 pointer-events-none z-10" />
                 {imageUrl ? (
-                  <img src={imageUrl} alt={data.name} className="w-full h-full object-cover object-center" />
+                  <img src={imageUrl} alt={data.name} className="w-full h-full object-cover object-top" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center relative overflow-hidden" style={{ background: theme.bgGradient }}>
                     <div className="w-12 h-12 rounded-full border-[3px] border-black/20 relative animate-pulse flex items-center justify-center bg-white/20">

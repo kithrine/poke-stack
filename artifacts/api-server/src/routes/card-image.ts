@@ -66,14 +66,13 @@ const TECH_VISUALS: Record<string, string> = {
   go: "aerodynamic fins and minimal clean streamlined gopher-like proportions",
   graphql: "network graph constellation pattern glowing on its underbelly",
   tailwind: "smooth color-gradient banding across its body like utility strips",
+  tailwindcss: "spectrum gradient utility-strip markings across its body",
   express: "lightweight barely-visible framework lines etched like wireframe scaffolding",
   django: "emerald green lattice patterns like organized framework bricks",
   rails: "ruby-red gem embedded prominently on its forehead",
   spring: "green leaf spring coil patterns along its joints",
   nextjs: "server-glow halo effect and hybrid rendered shimmer",
   redux: "predictable state tree ring patterns on its torso",
-  tailwindcss: "spectrum gradient utility-strip markings across its body",
-  kubernetes: "orbital cluster ring system floating around its form",
 };
 
 function pickArchetype(name: string): string {
@@ -155,6 +154,7 @@ router.post("/resume/card-image", async (req, res) => {
     techLine,
     `This individual creature is uniquely named ${name} — ${pokedexEntry ? pokedexEntry.slice(0, 100) : "a rare and powerful being"}.`,
     `IMPORTANT: The creature body shape must strictly be ${archetype}. Do NOT substitute a bird, phoenix, or dragon unless the archetype specifies it.`,
+    `FRAMING: The creature must be composed so its face and head are clearly visible in the UPPER half of the image. Show the creature from roughly knee/base level up to well above its head. The face must be the focal point and must NOT be cropped or cut off. Leave clear space above the head.`,
     `Painted in the iconic Nintendo/Game Freak Pokémon card watercolor-illustration style.`,
     `Centered subject on a clean gradient background. Vibrant, high-detail, professional card art. No text. No card frame. Just the creature.`,
   ]

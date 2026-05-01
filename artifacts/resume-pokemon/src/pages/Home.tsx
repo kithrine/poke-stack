@@ -36,7 +36,7 @@ export default function Home() {
             <div className="absolute top-1/2 left-0 w-full h-[4px] bg-foreground -translate-y-1/2" />
             <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-white border-[3px] border-foreground rounded-full -translate-x-1/2 -translate-y-1/2" />
           </div>
-          <span className="font-display text-lg tracking-tight text-primary">Poke-Stack</span>
+          <span className="font-display text-lg tracking-tight text-primary">Poké-Stack</span>
         </button>
       </nav>
 
@@ -45,12 +45,12 @@ export default function Home() {
         <div className="space-y-10">
           <div className="inline-block bg-secondary border-4 border-foreground shadow-sm px-4 py-2 transform -rotate-2">
             <span className="font-display text-xs text-foreground uppercase tracking-widest">
-              Wild Career Appeared!
+              Wild Developer Appeared!
             </span>
           </div>
 
           <h1 className="text-5xl lg:text-6xl xl:text-7xl font-display text-foreground leading-[1.1] drop-shadow-sm">
-            Evolve your <span className="text-primary">career</span> into a legend.
+            Evolve your <span className="text-primary">résumé</span> into a legend.
           </h1>
 
           <p className="text-xl lg:text-2xl font-semibold text-muted-foreground max-w-xl leading-relaxed">
