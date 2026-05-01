@@ -174,10 +174,15 @@ components:
           type: string
         pokedexEntry:
           type: string
+        attacks:
+          type: array
+          items:
+            $ref: "#/components/schemas/PokemonAttack"
       required:
         - pokemonType
         - name
         - pokedexEntry
+        - attacks
     CardImageResult:
       type: object
       properties:

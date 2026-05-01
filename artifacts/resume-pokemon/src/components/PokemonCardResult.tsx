@@ -95,6 +95,7 @@ export function PokemonCardResult({ data, onReset }: Props) {
         pokemonType: data.pokemonType,
         name: data.name,
         pokedexEntry: data.pokedexEntry,
+        attacks: data.attacks,
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

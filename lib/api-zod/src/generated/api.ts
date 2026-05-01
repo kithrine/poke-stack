@@ -55,6 +55,13 @@ export const GenerateCardImageBody = zod.object({
   pokemonType: zod.string(),
   name: zod.string(),
   pokedexEntry: zod.string(),
+  attacks: zod.array(
+    zod.object({
+      name: zod.string(),
+      damage: zod.number(),
+      description: zod.string(),
+    }),
+  ),
 });
 
 export const GenerateCardImageResponse = zod.object({

@@ -37,6 +37,7 @@ export interface CardImageRequest {
   pokemonType: string;
   name: string;
   pokedexEntry: string;
+  attacks: PokemonAttack[];
 }
 
 export interface CardImageResult {
