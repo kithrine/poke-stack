@@ -128,7 +128,7 @@ router.post("/resume/analyze/:filename", async (req, res) => {
 
     const completion = await openai.chat.completions.create({
       model: "gpt-5-mini",
-      max_completion_tokens: 1024,
+      max_completion_tokens: 8000,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: USER_PROMPT_TEMPLATE(resumeText) },
@@ -136,7 +136,19 @@ router.post("/resume/analyze/:filename", async (req, res) => {
       response_format: { type: "json_object" },
     });
 
-    const raw = completion.choices[0]?.message?.content ?? "{}";
+    const choice = completion.choices[0];
+    const finishReason = choice?.finish_reason;
+    const raw = choice?.message?.content ?? "";
+
+    if (finishReason === "length" || !raw) {
+      req.log.error(
+        { filename, finishReason, rawLength: raw.length, tokens: completion.usage },
+        "AI response was truncated or empty"
+      );
+      res.status(500).json({ error: "AI response was truncated. Please try again." });
+      return;
+    }
+
     const cardData = JSON.parse(raw);
 
     req.log.info({ filename, pokemonType: cardData.pokemonType }, "Resume analyzed successfully");
