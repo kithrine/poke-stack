@@ -157,39 +157,58 @@ export function PokemonCardResult({ data, onReset }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center animate-in zoom-in duration-700 ease-out-back" style={{ animationName: 'enterCard', animationDuration: '0.8s' }}>
+    <div className="flex flex-col items-center" style={{ animationName: 'enterCard', animationDuration: '0.8s', animation: 'enterCard 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>
       <style>{`
+        @property --holo-border-angle {
+          syntax: '<angle>';
+          inherits: false;
+          initial-value: 0deg;
+        }
+        @keyframes holo-border-rotate {
+          to { --holo-border-angle: 360deg; }
+        }
         @keyframes enterCard {
           0% { opacity: 0; transform: scale(0.5) translateY(50px) rotateX(20deg); }
           60% { transform: scale(1.05) translateY(-10px) rotateX(-5deg); }
           100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0deg); }
         }
-        .ease-out-back { transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .holo-border-animated {
+          background: conic-gradient(from var(--holo-border-angle), #ff0066, #ff6600, #ffdd00, #00ee88, #00aaff, #aa44ff, #ff0066);
+          animation: holo-border-rotate 4s linear infinite;
+        }
       `}</style>
       
       <div 
         style={{ perspective: '1000px' }} 
         className="w-full max-w-[320px] mx-auto z-10"
       >
+        {/* Holographic border wrapper — always animating */}
         <div
           ref={cardRef}
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="relative w-full aspect-[2.5/3.5] rounded-xl overflow-hidden cursor-pointer"
+          className="relative w-full aspect-[2.5/3.5] cursor-pointer holo-border-animated"
           style={{
             transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${isHovered ? 1.05 : 1})`,
             transformStyle: 'preserve-3d',
             transition: isHovered ? 'transform 0.1s ease-out' : 'transform 0.5s ease-out',
-            boxShadow: isHovered 
-              ? '20px 20px 30px rgba(0,0,0,0.3), -10px -10px 20px rgba(255,255,255,0.1)' 
-              : '10px 10px 20px rgba(0,0,0,0.2)',
-            backgroundColor: '#ffe', // Backup
-            background: theme.bgGradient,
-            border: `12px solid ${theme.border}`,
-            padding: '8px',
+            boxShadow: isHovered
+              ? '0 25px 50px rgba(0,0,0,0.45), 0 0 40px rgba(180,80,255,0.35)'
+              : '0 12px 28px rgba(0,0,0,0.28), 0 0 20px rgba(180,80,255,0.15)',
+            borderRadius: '20px',
+            padding: '5px',
           }}
         >
+          {/* Inner card — clips overlays */}
+          <div
+            className="relative w-full h-full overflow-hidden"
+            style={{
+              borderRadius: '16px',
+              background: theme.bgGradient,
+              padding: '8px',
+            }}
+          >
           {/* Holographic overlay */}
           <div 
             className="absolute inset-0 pointer-events-none z-40" 
@@ -215,7 +234,19 @@ export function PokemonCardResult({ data, onReset }: Props) {
                 <span className="font-display text-[9px] uppercase tracking-wider text-black/50 block leading-none mb-1">
                   Basic Pokémon
                 </span>
-                <h2 className="font-display text-[15px] font-bold text-black m-0 leading-tight drop-shadow-sm">
+                <h2
+                  className="font-display font-bold text-black m-0 leading-tight drop-shadow-sm"
+                  style={{
+                    fontSize: `${
+                      data.name.length <= 14 ? 15
+                      : data.name.length <= 18 ? 13
+                      : data.name.length <= 22 ? 11
+                      : data.name.length <= 28 ? 9.5
+                      : 8
+                    }px`,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {data.name}
                 </h2>
               </div>
@@ -258,7 +289,7 @@ export function PokemonCardResult({ data, onReset }: Props) {
 
               {/* Attacks */}
               <div className="flex-1 flex flex-col justify-center space-y-2 py-1">
-                {data.attacks.map((attack, i) => (
+                {data.attacks.slice(0, 2).map((attack, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <div className="flex gap-0.5 shrink-0">
                       <div 
@@ -311,6 +342,7 @@ export function PokemonCardResult({ data, onReset }: Props) {
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       <div className="mt-8 flex flex-col sm:flex-row gap-3 w-full max-w-[320px]">

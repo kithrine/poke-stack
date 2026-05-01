@@ -63,7 +63,7 @@ HP CALCULATION:
 Base HP is 40, add 6 per year of experience.
 
 ATTACKS:
-Create 2-3 attacks based on their actual technical skills. Make them sound like Pokémon moves but reference real technologies.
+Create exactly 2 attacks based on their actual technical skills. Make them sound like Pokémon moves but reference real technologies.
 Each attack has:
 - name: A creative Pokémon-style move name referencing their skill (e.g. "React Rapid Strike", "SQL Seismic Toss", "Docker Deploy Dash")
 - damage: 10-80 damage based on how advanced/rare the skill is
