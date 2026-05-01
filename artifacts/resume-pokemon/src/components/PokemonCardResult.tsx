@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, MouseEvent } from "react";
 import { PokemonCardData } from "./UploadArea";
 import { Button } from "@/components/ui/button";
 import { useGenerateCardImage } from "@workspace/api-client-react";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 
 // Rich CSS color system for types
 const TYPE_THEMES: Record<
@@ -73,16 +73,14 @@ export function PokemonCardResult({ data, onReset }: Props) {
 
       await new Promise((r) => setTimeout(r, 100));
 
-      const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: null,
-        useCORS: true,
-        scale: 3,
-        logging: false,
+      const dataUrl = await toPng(cardRef.current, {
+        pixelRatio: 3,
+        cacheBust: true,
       });
 
       const link = document.createElement("a");
-      link.download = `${data.name.replace(/\s+/g, "-").toLowerCase()}-pokemon-card.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.download = `${data.name.replace(/\s+/g, "-").toLowerCase()}-poke-stack-card.png`;
+      link.href = dataUrl;
       link.click();
     } finally {
       setIsDownloading(false);

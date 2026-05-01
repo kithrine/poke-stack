@@ -1,4 +1,4 @@
-# PokéResume Workspace
+# Poke-Stack Workspace
 
 ## Overview
 

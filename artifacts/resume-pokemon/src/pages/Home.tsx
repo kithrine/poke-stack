@@ -36,7 +36,7 @@ export default function Home() {
             <div className="absolute top-1/2 left-0 w-full h-[4px] bg-foreground -translate-y-1/2" />
             <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-white border-[3px] border-foreground rounded-full -translate-x-1/2 -translate-y-1/2" />
           </div>
-          <span className="font-display text-lg tracking-tight text-primary">PokéResume</span>
+          <span className="font-display text-lg tracking-tight text-primary">Poke-Stack</span>
         </button>
       </nav>
 
