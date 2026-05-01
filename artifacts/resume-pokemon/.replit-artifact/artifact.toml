@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Resume to Pokémon Card"
+version = "1.0.0"
+id = "artifacts/resume-pokemon"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22396
+
+[services.development]
+run = "pnpm --filter @workspace/resume-pokemon run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/resume-pokemon", "run", "build" ]
+publicDir = "artifacts/resume-pokemon/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22396"
+BASE_PATH = "/"

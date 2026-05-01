@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: resume
+    description: Resume upload operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /resume/upload:
+    post:
+      operationId: uploadResume
+      tags: [resume]
+      summary: Upload a resume file
+      description: Accepts PDF or Word document and saves it for processing
+      responses:
+        "200":
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +54,29 @@ components:
           type: string
       required:
         - status
-
+    UploadResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        filename:
+          type: string
+        originalName:
+          type: string
+        size:
+          type: number
+        message:
+          type: string
+      required:
+        - success
+        - filename
+        - originalName
+        - size
+        - message
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

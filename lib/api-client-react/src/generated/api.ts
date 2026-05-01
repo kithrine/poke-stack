@@ -5,15 +5,18 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type { ErrorResponse, HealthStatus, UploadResult } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
 import type { ErrorType } from "../custom-fetch";
@@ -99,3 +102,85 @@ export function useHealthCheck<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Accepts PDF or Word document and saves it for processing
+ * @summary Upload a resume file
+ */
+export const getUploadResumeUrl = () => {
+  return `/api/resume/upload`;
+};
+
+export const uploadResume = async (
+  options?: RequestInit,
+): Promise<UploadResult> => {
+  return customFetch<UploadResult>(getUploadResumeUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getUploadResumeMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof uploadResume>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof uploadResume>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["uploadResume"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof uploadResume>>,
+    void
+  > = () => {
+    return uploadResume(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UploadResumeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof uploadResume>>
+>;
+
+export type UploadResumeMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Upload a resume file
+ */
+export const useUploadResume = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof uploadResume>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof uploadResume>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getUploadResumeMutationOptions(options));
+};

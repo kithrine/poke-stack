@@ -14,3 +14,15 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Accepts PDF or Word document and saves it for processing
+ * @summary Upload a resume file
+ */
+export const UploadResumeResponse = zod.object({
+  success: zod.boolean(),
+  filename: zod.string(),
+  originalName: zod.string(),
+  size: zod.number(),
+  message: zod.string(),
+});

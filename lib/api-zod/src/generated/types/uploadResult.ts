@@ -5,9 +5,6 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export interface HealthStatus {
-  status: string;
-}
 
 export interface UploadResult {
   success: boolean;
@@ -15,8 +12,4 @@ export interface UploadResult {
   originalName: string;
   size: number;
   message: string;
-}
-
-export interface ErrorResponse {
-  error: string;
 }
