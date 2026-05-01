@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, MouseEvent } from "react";
 import { PokemonCardData } from "./UploadArea";
 import { Button } from "@/components/ui/button";
 import { useGenerateCardImage } from "@workspace/api-client-react";
+import html2canvas from "html2canvas";
 
 // Rich CSS color system for types
 const TYPE_THEMES: Record<
@@ -59,6 +60,34 @@ export function PokemonCardResult({ data, onReset }: Props) {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!cardRef.current || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      // Reset tilt before capture so the card is flat in the export
+      setTilt({ x: 0, y: 0 });
+      setGlare({ x: 50, y: 50, opacity: 0 });
+      setIsHovered(false);
+
+      await new Promise((r) => setTimeout(r, 100));
+
+      const canvas = await html2canvas(cardRef.current, {
+        backgroundColor: null,
+        useCORS: true,
+        scale: 3,
+        logging: false,
+      });
+
+      const link = document.createElement("a");
+      link.download = `${data.name.replace(/\s+/g, "-").toLowerCase()}-pokemon-card.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   useEffect(() => {
     generateImage.mutate({
@@ -284,17 +313,27 @@ export function PokemonCardResult({ data, onReset }: Props) {
         </div>
       </div>
 
-      <Button
-        onClick={onReset}
-        variant="outline"
-        className="mt-10 px-8 border-4 uppercase tracking-wider font-display text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-white hover:text-white"
-        style={{ 
-          backgroundColor: theme.badge,
-          borderColor: theme.accent
-        }}
-      >
-        Analyze Another Resume
-      </Button>
+      <div className="mt-8 flex flex-col sm:flex-row gap-3 w-full max-w-[320px]">
+        <Button
+          onClick={handleDownload}
+          disabled={isDownloading || generateImage.isPending}
+          className="flex-1 border-4 uppercase tracking-wider font-display text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-white hover:text-white disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
+          style={{ backgroundColor: theme.badge, borderColor: theme.accent }}
+          data-testid="button-download-card"
+        >
+          {isDownloading ? "Saving..." : generateImage.isPending ? "Generating art..." : "Download Card"}
+        </Button>
+
+        <Button
+          onClick={onReset}
+          variant="outline"
+          className="flex-1 border-4 uppercase tracking-wider font-display text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all bg-white/10 text-white hover:bg-white/20 hover:text-white"
+          style={{ borderColor: "rgba(255,255,255,0.4)" }}
+          data-testid="button-analyze-another"
+        >
+          New Card
+        </Button>
+      </div>
     </div>
   );
 }

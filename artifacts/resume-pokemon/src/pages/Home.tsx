@@ -1,21 +1,43 @@
 import React, { useState } from "react";
 import { UploadArea, type PokemonCardData } from "@/components/UploadArea";
 import { PokemonCardResult } from "@/components/PokemonCardResult";
+import { PokeballReveal } from "@/components/PokeballReveal";
+
+type AppState = "upload" | "revealing" | "card";
 
 export default function Home() {
+  const [appState, setAppState] = useState<AppState>("upload");
   const [cardData, setCardData] = useState<PokemonCardData | null>(null);
+
+  const handleCardReady = (data: PokemonCardData) => {
+    setCardData(data);
+    setAppState("revealing");
+  };
+
+  const handleRevealComplete = () => {
+    setAppState("card");
+  };
+
+  const handleReset = () => {
+    setAppState("upload");
+    setCardData(null);
+  };
 
   return (
     <div className="min-h-[100dvh] bg-background pixel-bg overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 w-full border-b-4 border-foreground bg-card/90 backdrop-blur z-50 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full border-4 border-foreground bg-accent relative overflow-hidden">
+        <button
+          onClick={appState !== "upload" ? handleReset : undefined}
+          className="flex items-center gap-2 group"
+          style={{ cursor: appState !== "upload" ? "pointer" : "default" }}
+        >
+          <div className="w-8 h-8 rounded-full border-4 border-foreground bg-accent relative overflow-hidden group-hover:scale-110 transition-transform">
             <div className="absolute top-1/2 left-0 w-full h-[4px] bg-foreground -translate-y-1/2" />
             <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-white border-[3px] border-foreground rounded-full -translate-x-1/2 -translate-y-1/2" />
           </div>
           <span className="font-display text-lg tracking-tight text-primary">PokéResume</span>
-        </div>
+        </button>
       </nav>
 
       {/* Hero Section */}
@@ -37,41 +59,23 @@ export default function Home() {
           </p>
 
           <div className="pt-4">
-            {cardData ? (
-              <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-4 overflow-y-auto">
-                <div className="absolute top-4 right-4">
-                  <button 
-                    onClick={() => setCardData(null)}
-                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white border-2 border-white/20 transition-colors"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="my-auto w-full flex items-center justify-center">
-                  <PokemonCardResult data={cardData} onReset={() => setCardData(null)} />
-                </div>
-              </div>
-            ) : (
-              <UploadArea onCardReady={setCardData} />
-            )}
+            <UploadArea onCardReady={handleCardReady} />
           </div>
 
-          {!cardData && (
-            <div className="flex flex-wrap gap-6 pt-8 border-t-4 border-foreground/10">
-              <div className="flex items-center gap-3 font-semibold text-foreground">
-                <div className="w-6 h-6 rounded-full bg-accent border-2 border-foreground" />
-                <span>Instantly generated</span>
-              </div>
-              <div className="flex items-center gap-3 font-semibold text-foreground">
-                <div className="w-6 h-6 rounded-full bg-primary border-2 border-foreground" />
-                <span>Beautiful design</span>
-              </div>
-              <div className="flex items-center gap-3 font-semibold text-foreground">
-                <div className="w-6 h-6 rounded-full bg-secondary border-2 border-foreground" />
-                <span>Fun to share</span>
-              </div>
+          <div className="flex flex-wrap gap-6 pt-8 border-t-4 border-foreground/10">
+            <div className="flex items-center gap-3 font-semibold text-foreground">
+              <div className="w-6 h-6 rounded-full bg-accent border-2 border-foreground" />
+              <span>Instantly generated</span>
             </div>
-          )}
+            <div className="flex items-center gap-3 font-semibold text-foreground">
+              <div className="w-6 h-6 rounded-full bg-primary border-2 border-foreground" />
+              <span>Beautiful design</span>
+            </div>
+            <div className="flex items-center gap-3 font-semibold text-foreground">
+              <div className="w-6 h-6 rounded-full bg-secondary border-2 border-foreground" />
+              <span>Fun to share</span>
+            </div>
+          </div>
         </div>
 
         <div className="relative hidden lg:block">
@@ -86,6 +90,20 @@ export default function Home() {
           <div className="absolute top-1/2 -right-12 w-12 h-12 bg-primary border-4 border-foreground rotate-45 animate-pulse" />
         </div>
       </main>
+
+      {/* Pokéball reveal overlay */}
+      {appState === "revealing" && (
+        <PokeballReveal onComplete={handleRevealComplete} />
+      )}
+
+      {/* Card overlay */}
+      {appState === "card" && cardData && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 overflow-y-auto">
+          <div className="my-auto w-full flex items-center justify-center">
+            <PokemonCardResult data={cardData} onReset={handleReset} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
