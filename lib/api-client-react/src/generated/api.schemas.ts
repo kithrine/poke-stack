@@ -33,6 +33,17 @@ export interface PokemonCardData {
   yearsOfExperience: number;
 }
 
+export interface CardImageRequest {
+  pokemonType: string;
+  name: string;
+  pokedexEntry: string;
+}
+
+export interface CardImageResult {
+  imageBase64: string;
+  mimeType: string;
+}
+
 export interface ErrorResponse {
   error: string;
 }

@@ -17,6 +17,8 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  CardImageRequest,
+  CardImageResult,
   ErrorResponse,
   HealthStatus,
   PokemonCardData,
@@ -24,7 +26,7 @@ import type {
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -33,7 +35,6 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const getHealthCheckUrl = () => {
@@ -109,7 +110,6 @@ export function useHealthCheck<
 }
 
 /**
- * Accepts PDF or Word document and saves it for processing
  * @summary Upload a resume file
  */
 export const getUploadResumeUrl = () => {
@@ -191,7 +191,6 @@ export const useUploadResume = <
 };
 
 /**
- * Extracts text and uses AI to generate Pokémon card data
  * @summary Analyze an uploaded resume
  */
 export const getAnalyzeResumeUrl = (filename: string) => {
@@ -273,4 +272,90 @@ export const useAnalyzeResume = <
   TContext
 > => {
   return useMutation(getAnalyzeResumeMutationOptions(options));
+};
+
+/**
+ * @summary Generate a Pokemon card artwork image
+ */
+export const getGenerateCardImageUrl = () => {
+  return `/api/resume/card-image`;
+};
+
+export const generateCardImage = async (
+  cardImageRequest: CardImageRequest,
+  options?: RequestInit,
+): Promise<CardImageResult> => {
+  return customFetch<CardImageResult>(getGenerateCardImageUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(cardImageRequest),
+  });
+};
+
+export const getGenerateCardImageMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateCardImage>>,
+    TError,
+    { data: BodyType<CardImageRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof generateCardImage>>,
+  TError,
+  { data: BodyType<CardImageRequest> },
+  TContext
+> => {
+  const mutationKey = ["generateCardImage"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof generateCardImage>>,
+    { data: BodyType<CardImageRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return generateCardImage(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GenerateCardImageMutationResult = NonNullable<
+  Awaited<ReturnType<typeof generateCardImage>>
+>;
+export type GenerateCardImageMutationBody = BodyType<CardImageRequest>;
+export type GenerateCardImageMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Generate a Pokemon card artwork image
+ */
+export const useGenerateCardImage = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateCardImage>>,
+    TError,
+    { data: BodyType<CardImageRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof generateCardImage>>,
+  TError,
+  { data: BodyType<CardImageRequest> },
+  TContext
+> => {
+  return useMutation(getGenerateCardImageMutationOptions(options));
 };

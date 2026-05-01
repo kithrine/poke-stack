@@ -8,7 +8,6 @@
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -16,7 +15,6 @@ export const HealthCheckResponse = zod.object({
 });
 
 /**
- * Accepts PDF or Word document and saves it for processing
  * @summary Upload a resume file
  */
 export const UploadResumeResponse = zod.object({
@@ -28,7 +26,6 @@ export const UploadResumeResponse = zod.object({
 });
 
 /**
- * Extracts text and uses AI to generate Pokémon card data
  * @summary Analyze an uploaded resume
  */
 export const AnalyzeResumeParams = zod.object({
@@ -49,4 +46,18 @@ export const AnalyzeResumeResponse = zod.object({
   ),
   pokedexEntry: zod.string(),
   yearsOfExperience: zod.number(),
+});
+
+/**
+ * @summary Generate a Pokemon card artwork image
+ */
+export const GenerateCardImageBody = zod.object({
+  pokemonType: zod.string(),
+  name: zod.string(),
+  pokedexEntry: zod.string(),
+});
+
+export const GenerateCardImageResponse = zod.object({
+  imageBase64: zod.string(),
+  mimeType: zod.string(),
 });

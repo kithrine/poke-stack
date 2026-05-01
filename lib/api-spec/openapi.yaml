@@ -18,7 +18,6 @@ paths:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -31,7 +30,6 @@ paths:
       operationId: uploadResume
       tags: [resume]
       summary: Upload a resume file
-      description: Accepts PDF or Word document and saves it for processing
       responses:
         "200":
           description: File uploaded successfully
@@ -50,7 +48,6 @@ paths:
       operationId: analyzeResume
       tags: [resume]
       summary: Analyze an uploaded resume
-      description: Extracts text and uses AI to generate Pokémon card data
       parameters:
         - name: filename
           in: path
@@ -72,6 +69,30 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /resume/card-image:
+    post:
+      operationId: generateCardImage
+      tags: [resume]
+      summary: Generate a Pokemon card artwork image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardImageRequest"
+      responses:
+        "200":
+          description: Image generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardImageResult"
+        "500":
+          description: Generation failed
           content:
             application/json:
               schema:
@@ -144,6 +165,29 @@ components:
         - attacks
         - pokedexEntry
         - yearsOfExperience
+    CardImageRequest:
+      type: object
+      properties:
+        pokemonType:
+          type: string
+        name:
+          type: string
+        pokedexEntry:
+          type: string
+      required:
+        - pokemonType
+        - name
+        - pokedexEntry
+    CardImageResult:
+      type: object
+      properties:
+        imageBase64:
+          type: string
+        mimeType:
+          type: string
+      required:
+        - imageBase64
+        - mimeType
     ErrorResponse:
       type: object
       properties:

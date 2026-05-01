@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./cardImageRequest";
+export * from "./cardImageResult";
 export * from "./errorResponse";
 export * from "./healthStatus";
 export * from "./pokemonAttack";

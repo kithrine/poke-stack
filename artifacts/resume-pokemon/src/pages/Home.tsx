@@ -38,7 +38,19 @@ export default function Home() {
 
           <div className="pt-4">
             {cardData ? (
-              <PokemonCardResult data={cardData} onReset={() => setCardData(null)} />
+              <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-4 overflow-y-auto">
+                <div className="absolute top-4 right-4">
+                  <button 
+                    onClick={() => setCardData(null)}
+                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white border-2 border-white/20 transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="my-auto w-full flex items-center justify-center">
+                  <PokemonCardResult data={cardData} onReset={() => setCardData(null)} />
+                </div>
+              </div>
             ) : (
               <UploadArea onCardReady={setCardData} />
             )}
